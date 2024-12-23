@@ -1,19 +1,20 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
 const schema = new mongoose.Schema({
-    "title": "Issue logging in",
-    "description": "I cant log in my account",
-    "status": "open", //open, assigned, closed
-    "priority": "high",
-    "department": "Support",
-    "clientId": "idUsuario",
-    "agentId": "idAgent",
+    "title": { type: String, required: true },
+    "description": { type: String, required: true },
+    "status": { type: String, enum: ["open", "in-progress", "closed"], default: "open" }, //open, assigned, closed
+    "priority": { type: String, enum: ["high", "medium", "low"], default: "medium" }, //high, medium or low
+    "department": { type: String, required: true },
+    "clientId": { type: Schema.Types.ObjectId, ref: "User" },
+    "agentId": { type: Schema.Types.ObjectId, ref: "User"  },
     "updates": [{
-        "timestamp": "2023-12-01T10:00:00z",
-        "authorId": "idAgent",
-        "action": "status updated to assigned"
+        "timestamp": { type: Date, default: Date.now() },
+        "authorId": { type: Schema.Types.ObjectId, ref: "User" },
+        "action": { type: String }
     }],
-    "attachments": ["fil1.pdf", "file2.png"] 
+    "attachments": [{ type: String }] 
 });
 
 const Model = mongoose.model("tickets", schema);

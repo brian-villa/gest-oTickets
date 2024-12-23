@@ -2,7 +2,7 @@ const express = require("express")
 const path = require("path")
 
 const db = require('./database')
-const apiRoutes = require("./routes/api");
+const apiRoutes = require("./api");
 
 const app = express()
 
