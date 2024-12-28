@@ -14,6 +14,9 @@ router.post("/", createTicket);
 //Listar tickets $GET
 router.get("/", getTickets);
 
+//Buscar tickets por hashtag ou palavras
+router.get("/search", searchTickets);
+
 // Atualizar um ticket existente $PUT
 router.put("/:id", updateTickets);
 
