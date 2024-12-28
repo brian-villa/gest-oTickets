@@ -1,7 +1,7 @@
 const express = require("express")
 const path = require("path")
 
-const db = require('./database')
+const db = require('./utils/dbConnect')
 const apiRoutes = require("./api");
 
 const app = express()
