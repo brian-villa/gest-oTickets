@@ -3,8 +3,8 @@ const { hashPassword, comparePassword } = require("../utils/pwd");
 
 const createUsers = async (req, res) => {
     try {
-        const { pwd, ...fields } = req.body;
-        const hashedPassword = await hashPassword(pwd);
+        const { password, ...fields } = req.body;
+        const hashedPassword = await hashPassword(password);
 
         const newUser = new User({ ...fields, password: hashedPassword });
         const savedUser = await newUser.save();
