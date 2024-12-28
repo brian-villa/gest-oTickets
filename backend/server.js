@@ -9,10 +9,11 @@ const apiRoutes = require("./api");
 const app = express()
 
 //Middlewares
-const csrfProtection = csrf({ cookie: true });
-
 app.use(express.json());
 app.use(helmet());
+
+// CSRF Protection
+const csrfProtection = csrf({ cookie: true });
 app.use(csrfProtection);
 
 //chamada das rotas na api
