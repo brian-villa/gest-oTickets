@@ -1,9 +1,14 @@
 const User = require("../models/users");
+const { hashPassword, comparePassword } = require("../utils/pwd");
 
 const createUsers = async (req, res) => {
     try {
-        const newUser = new User(req.body);
+        const { pwd, ...fields } = req.body;
+        const hashedPassword = await hashPassword(pwd);
+
+        const newUser = new User({ ...fields, password: hashedPassword });
         const savedUser = await newUser.save();
+
         res.status(201).json({ message: "User created!", savedUser });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -53,10 +58,33 @@ const deleteUsers = async (req, res) => {
     };
 };
 
+const loginUser = async (req, res) => {
+    try{
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        
+        if(!user) {
+            return res.status(404).json({ error: "User not found "});
+        };
+
+        const isPasswordValid = await comparePassword(password, user.password);
+        if(!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        };
+
+        res.status(200).json({ message: "Login successful", user});
+
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    };
+};
+
 
 module.exports = {
     createUsers,
     getUsers,
     updateUsers,
     deleteUsers,
+    loginUser,
 };
