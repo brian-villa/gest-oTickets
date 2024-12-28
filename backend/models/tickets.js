@@ -20,3 +20,4 @@ const schema = new mongoose.Schema({
 const Model = mongoose.model("tickets", schema);
 
 module.exports = Model
+

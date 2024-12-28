@@ -1,4 +1,4 @@
-const mongoose = required("mongoose");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const schema = mongoose.Schema({
@@ -6,6 +6,6 @@ const schema = mongoose.Schema({
     "agents": [{ type: String }]
 })
 
-const Model = mongoose.Model("users", schema);
+const Model = mongoose.model("departments", schema);
 
 module.exports = Model

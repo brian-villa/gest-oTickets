@@ -8,6 +8,6 @@ const schema = new mongoose.Schema({
     "role": { type: String, enum: ["client", "agent", "admin"] }, //client, agent, admin
 });
 
-const Model = mongoose.Model("users", schema);
+const Model = mongoose.model("users", schema);
 
 module.exports = Model
