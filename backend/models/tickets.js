@@ -14,9 +14,11 @@ const schema = new mongoose.Schema({
         "authorId": { type: Schema.Types.ObjectId, ref: "User" },
         "action": { type: String }
     }],
+    "hashtags": [{ type: String }],
     "attachments": [{ type: String }] 
 });
 
 const Model = mongoose.model("tickets", schema);
 
 module.exports = Model
+

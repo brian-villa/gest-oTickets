@@ -5,10 +5,10 @@ const createTicket = async (req, res) => {
     try {
         const newTicket = new Ticket(req.body);
         const savedTicket = await newTicket.save();
-        res.status(201).json(savedTicket);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+        res.status(201).json({ message: "Ticket created!" , savedTicket });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    };
 };
 
 const getTickets = async (req, res) => {
@@ -16,9 +16,35 @@ const getTickets = async (req, res) => {
         const tickets = await Ticket.find();
         res.status(200).json(tickets);
     } catch(e) {
-        res.status(500).json({ e: error.message });
+        res.status(500).json({ error: e.message });
     }
 };
+
+const searchTickets = async (req, res) => {
+    try {
+        const { query, hashtags } = req.query;
+
+        const filters = {};
+
+        if(query) {
+            filters.$or = [
+                { title: { $regex: query, $options: "i" } }, 
+                { description: { $regex: query, $options: "i" } }
+            ];
+        };
+
+        if(hashtags) {
+            const hashtagArray = hashtags.split(",");
+            filters.hashtags = { $in: hashtagArray };
+        };
+
+        const tickets = await Ticket.find(filters);
+        res.status(200).json(tickets);
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+};
+
 
 const updateTickets = async (req, res) => {
     try {
@@ -35,7 +61,7 @@ const updateTickets = async (req, res) => {
 
         res.status(200).json(updatedTicket);
     } catch(e) {
-        res.status(500).json({ e: error.message });
+        res.status(500).json({ error: e.message });
     };
 };
 
@@ -50,13 +76,14 @@ const deleteTickets = async (req, res) => {
 
         res.status(200).json({ message: "Ticket removed "})
     } catch(e) {
-        res.status(500).json({ e: error.message });
+        res.status(500).json({ error: e.message });
     };
 };
 
 module.exports = {
     createTicket,
     getTickets,
+    searchTickets,
     updateTickets,
     deleteTickets,
 };
