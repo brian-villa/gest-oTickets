@@ -3,6 +3,7 @@ import { TextField, Box, Container, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 // Definindo o esquema de validação com Yup
 const validationSchema = Yup.object({
@@ -10,23 +11,27 @@ const validationSchema = Yup.object({
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
-// Estilos reutilizáveis
-const fieldStyles = {
-  mb: 4,
-  position: 'relative',
-  '& .MuiFormHelperText-root': {
-    position: 'absolute', // Posiciona o erro abaixo do campo
-    bottom: '-20px', // Ajuste a distância entre o campo e o erro
-    left: 0, // Alinha o erro à esquerda
-  },
-};
-
 const Signin = () => {
   const navigate = useNavigate();
 
-  const handleSignUpClick = () => {
-    navigate('/signup'); // Redireciona para a página de cadastro
+  const handleSubmit = async (values) => {
+    console.log('Form submitted with values:', values); // Log para depuração
+    try {
+      const response = await axios.post('http://localhost:8080/api/users/login', values);
+      const { token, user } = response.data;
+  
+      // Armazenar o token e o nome do usuário no localStorage
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userName', user.name); // Armazenando o nome do usuário
+  
+      console.log('Login bem-sucedido! Redirecionando para a página Main.');
+      navigate('/main');
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      alert('Erro ao fazer login. Verifique suas credenciais.');
+    }
   };
+  
 
   return (
     <Container
@@ -39,17 +44,13 @@ const Signin = () => {
       }}
     >
       <Formik
-        initialValues={{ email: '', password: '' }} // Valores iniciais do formulário
-        validationSchema={validationSchema} // Esquema de validação
-        onSubmit={(values) => {
-          // Função chamada quando o formulário é enviado com sucesso
-          console.log(values);
-        }}
+        initialValues={{ email: '', password: '' }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
           <Form>
             <Box
-              component="form"
               sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -70,14 +71,13 @@ const Signin = () => {
                   justifyContent: 'center',
                   alignItems: 'center',
                   p: 4,
-                  width:'60%',
+                  width: '60%',
                 }}
               >
                 <Typography variant="h4" sx={{ mb: 2 }}>
                   SIGN IN
                 </Typography>
 
-                {/* Campo de email */}
                 <Field
                   as={TextField}
                   required
@@ -89,12 +89,11 @@ const Signin = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   fullWidth
-                  sx={fieldStyles} // Aplica os estilos reutilizáveis
-                  error={touched.email && Boolean(errors.email)} // Aplica borda vermelha se houver erro
-                  helperText={touched.email && errors.email} // Exibe o texto de erro abaixo do campo
+                  sx={{ mb: 4 }}
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
                 />
 
-                {/* Campo de senha */}
                 <Field
                   as={TextField}
                   required
@@ -106,13 +105,13 @@ const Signin = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   fullWidth
-                  sx={fieldStyles} // Aplica os estilos reutilizáveis
-                  error={touched.password && Boolean(errors.password)} // Aplica borda vermelha se houver erro
-                  helperText={touched.password && errors.password} // Exibe o texto de erro abaixo do campo
+                  sx={{ mb: 4 }}
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
                 />
 
                 <Button
-                  type="submit"
+                  type="submit" // Botão precisa ser do tipo submit
                   variant="contained"
                   sx={{
                     mt: 2,
@@ -125,9 +124,9 @@ const Signin = () => {
                     !values.password ||
                     Boolean(errors.email) ||
                     Boolean(errors.password)
-                  } // Desabilita o botão se o formulário não for válido
+                  }
                 >
-                  Login
+                  LOGIN
                 </Button>
               </Box>
 
@@ -141,7 +140,7 @@ const Signin = () => {
                   justifyContent: 'center',
                   alignItems: 'center',
                   p: 4,
-                  width:'40%'
+                  width: '40%',
                 }}
               >
                 <Typography variant="h4" sx={{ color: '#e0e1dd', mb: 2 }}>
@@ -151,7 +150,7 @@ const Signin = () => {
                   Don't have an account? Sign up now!
                 </Typography>
                 <Button
-                  onClick={handleSignUpClick}
+                  onClick={() => navigate('/signup')}
                   variant="contained"
                   sx={{
                     width: '60%',

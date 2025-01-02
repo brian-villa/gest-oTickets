@@ -59,26 +59,26 @@ const deleteUsers = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    try{
+    console.log('Requisição recebida para login');
+    try {
         const { email, password } = req.body;
-
         const user = await User.findOne({ email });
         
-        if(!user) {
-            return res.status(404).json({ error: "User not found "});
-        };
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
         const isPasswordValid = await comparePassword(password, user.password);
-        if(!isPasswordValid) {
+        if (!isPasswordValid) {
             return res.status(401).json({ error: "Invalid credentials" });
-        };
+        }
 
-        res.status(200).json({ message: "Login successful", user});
-
-    } catch(e) {
+        res.status(200).json({ message: "Login successful", user });
+    } catch (e) {
         res.status(500).json({ error: e.message });
-    };
+    }
 };
+
 
 
 module.exports = {

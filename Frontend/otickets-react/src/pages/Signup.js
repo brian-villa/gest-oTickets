@@ -1,7 +1,8 @@
-import React from 'react';
 import { TextField, Container, Button, Typography, Box } from '@mui/material';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';  // Importa o axios para requisições HTTP
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate para navegação
 
 // Definindo o esquema de validação com Yup
 const validationSchema = Yup.object({
@@ -25,6 +26,21 @@ const fieldStyles = {
 };
 
 function Signup() {
+  const navigate = useNavigate(); // Inicializa o hook de navegação
+
+  const handleSubmit = async (values) => {
+    try {
+      // Envia os dados para o backend
+      const response = await axios.post('http://localhost:8080/api/users', values);
+      console.log(response.data); // Exibe a resposta do backend
+
+      // Redireciona o usuário de volta para a página de login (Signin)
+      navigate('/');
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error.response?.data || error.message);
+    }
+  };
+
   return (
     <Container
       maxWidth="md"
@@ -38,10 +54,7 @@ function Signup() {
       <Formik
         initialValues={{ name: '', email: '', password: '', confirmPassword: '' }} // Valores iniciais
         validationSchema={validationSchema} // Esquema de validação
-        onSubmit={(values) => {
-          // Função chamada quando o formulário é enviado com sucesso
-          console.log(values);
-        }}
+        onSubmit={handleSubmit} // Função de envio
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
           <Form>

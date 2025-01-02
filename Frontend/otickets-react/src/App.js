@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signin from './pages/Signin'; // Página de login
-import Signup from './pages/Signup'; // Página de registro
+import Signin from './pages/Signin'; 
+import Signup from './pages/Signup'; 
+import Main from './pages/Main';
+import TicketComposer from './components/TicketComposer'; // Importando o TicketComposer como sub-rota
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -8,6 +11,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/main/*" element={<Main />}>
+          {/* Subrotas Main */}
+          <Route path="ticket-composer" element={<TicketComposer />} />
+          <Route path="profile" element={<Profile/>} />
+        </Route>
       </Routes>
     </Router>
   );

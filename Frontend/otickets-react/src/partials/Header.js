@@ -1,45 +1,51 @@
 import React, { useState } from 'react';
 import { AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar, Tooltip } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from 'react-router-dom'; // Importa o hook useNavigate para navegação
 
-const Header = () => {
-  // Estado para controlar o menu de usuário
+const Header = ({ userName }) => {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate(); // Hook para navegação programática
 
-  // Definindo as opções do menu manualmente
-  const settings = ['Account', 'Logout'];
-
-  // Função para abrir o menu de configurações
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  // Função para fechar o menu
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  // Função para redirecionar para a página de perfil
+  const handleNavigateToProfile = () => {
+    navigate('/profile'); // Navega para a página de perfil
+    handleCloseUserMenu(); // Fecha o menu após a navegação
+  };
+
+  // Função para realizar o logout e redirecionar para a página de login
+  const handleLogout = () => {
+    localStorage.removeItem('userName'); // Remove o nome do usuário do armazenamento local
+    navigate('/'); // Navega para a página de login
+    handleCloseUserMenu(); // Fecha o menu após o logout
   };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'black' }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             oTicket
           </Typography>
 
-          <Typography variant="h6" sx={{ marginRight:2, fontSize:15 }}>
-            Bem vindo, user
-          </Typography>
-          {/* Avatar customizado com Menu */}
+          {/* Exibindo o nome do usuário após login */}
+          {userName ? (
+            <Typography variant="h6" sx={{ marginRight: 2, fontSize: 15 }}>
+              Bem-vindo, {userName}
+            </Typography>
+          ) : (
+            <Typography variant="h6" sx={{ marginRight: 2, fontSize: 15 }}>
+              Bem-vindo, usuário
+            </Typography>
+          )}
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -62,12 +68,13 @@ const Header = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {/* Renderizando as opções do menu */}
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
+              {/* Alterando os itens do menu para incluir as ações de navegação */}
+              <MenuItem onClick={handleNavigateToProfile}>
+                <Typography sx={{ textAlign: 'center' }}>Account</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
