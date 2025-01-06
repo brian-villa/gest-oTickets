@@ -11,19 +11,29 @@ const validationSchema = Yup.object({
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
+// Estilo para os campos de texto com helperText posicionado de forma absoluta
+const fieldStyles = {
+  mb: 3,
+  position: 'relative',
+  '& .MuiFormHelperText-root': {
+    position: 'absolute',
+    bottom: '-20px', // Posiciona o texto de ajuda abaixo do campo
+    left: 0,
+  },
+};
+
 const Signin = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    console.log('Form submitted with values:', values); // Log para depuração
     try {
       const response = await axios.post('http://localhost:8080/api/users/login', values);
       const { token, user } = response.data;
-  
-      // Armazenar o token e o nome do usuário no localStorage
+
+      // Armazena o token e os dados do usuário no localStorage
       localStorage.setItem('authToken', token);
-      localStorage.setItem('userName', user.name); // Armazenando o nome do usuário
-  
+      localStorage.setItem('user', JSON.stringify(user));
+
       console.log('Login bem-sucedido! Redirecionando para a página Main.');
       navigate('/main');
     } catch (error) {
@@ -31,7 +41,6 @@ const Signin = () => {
       alert('Erro ao fazer login. Verifique suas credenciais.');
     }
   };
-  
 
   return (
     <Container
@@ -89,7 +98,7 @@ const Signin = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   fullWidth
-                  sx={{ mb: 4 }}
+                  sx={fieldStyles}
                   error={touched.email && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
                 />
@@ -105,13 +114,13 @@ const Signin = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   fullWidth
-                  sx={{ mb: 4 }}
+                  sx={fieldStyles}
                   error={touched.password && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
                 />
 
                 <Button
-                  type="submit" // Botão precisa ser do tipo submit
+                  type="submit"
                   variant="contained"
                   sx={{
                     mt: 2,

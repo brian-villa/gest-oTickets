@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
     "priority": { type: String, enum: ["high", "medium", "low"], default: "medium" }, //high, medium or low
     "department": { type: String, required: true },
     "clientId": { type: Schema.Types.ObjectId, ref: "User" },
-    "agentId": { type: Schema.Types.ObjectId, ref: "User"  },
+    "agentID": { type: Schema.Types.ObjectId, ref: "User", default: null },
     "updates": [{
         "timestamp": { type: Date, default: Date.now() },
         "authorId": { type: Schema.Types.ObjectId, ref: "User" },

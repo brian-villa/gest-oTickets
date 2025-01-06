@@ -14,8 +14,8 @@ function App() {
         <Route path="/main/*" element={<Main />}>
           {/* Subrotas Main */}
           <Route path="ticket-composer" element={<TicketComposer />} />
-          <Route path="profile" element={<Profile/>} />
         </Route>
+        <Route path="profile" element={<Profile/>} />
       </Routes>
     </Router>
   );

@@ -45,25 +45,42 @@ const searchTickets = async (req, res) => {
     }
 };
 
-
 const updateTickets = async (req, res) => {
     try {
-        const { id } = req.params;
-        const updatedTicket = await Ticket.findByIdAndUpdate(
-            id,
-            { $set: req.body }, //atualiza os campos no body da req
-            { new: true, runValidators: true } //retorna o documento atualizado e valida os dados
-        );
+      const { id } = req.params;
+      const { title, status, priority, description, department, hashtags, agentID } = req.body;
+  
+      const updatedTicket = await Ticket.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            title,
+            status, 
+            priority, 
+            description, 
+            department, 
+            hashtags: hashtags || [],  // Garantindo que hashtags sejam um array, caso não seja enviado
+            agentID,  // Atualiza o agentID
+          }
+        },
+        { new: true, runValidators: true }
+      );
+  
+      if (!updatedTicket) {
+        return res.status(404).json({ error: "Ticket not found" });
+      }
+  
+      res.status(200).json(updatedTicket);  // Envia o ticket atualizado de volta ao cliente
+    } catch (e) {
+      console.error("Erro ao atualizar ticket:", e);  // Log de erro
+      res.status(500).json({ error: e.message });
+    }
+  };
+  
 
-        if(!updatedTicket) {
-            return res.status(404).json({ error: "Ticket not found "});
-        };
+  
 
-        res.status(200).json(updatedTicket);
-    } catch(e) {
-        res.status(500).json({ error: e.message });
-    };
-};
+
 
 const deleteTickets = async (req, res) => {
     try {
