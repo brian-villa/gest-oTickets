@@ -14,18 +14,18 @@ const TicketComposer = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [departments, setDepartments] = useState([]); // Novo estado para armazenar os departamentos
-  const [selectedDepartmentName, setSelectedDepartmentName] = useState(''); // Estado para armazenar o nome do departamento selecionado
+  const [departments, setDepartments] = useState([]); 
+  const [selectedDepartmentName, setSelectedDepartmentName] = useState(''); 
 
-  const { onResetButtonState } = useOutletContext(); // Acesso à função para resetar o estado do botão
-  const navigate = useNavigate(); // Hook para navegação
+  const { onResetButtonState } = useOutletContext();
+  const navigate = useNavigate(); 
 
-  // Função para buscar os departamentos ao carregar o componente
+  
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/departments');
-        setDepartments(response.data); // Armazena os departamentos recebidos no estado
+        setDepartments(response.data); 
       } catch (error) {
         console.error('Erro ao buscar departamentos:', error);
         alert('Falha ao carregar departamentos!');
@@ -52,7 +52,7 @@ const TicketComposer = () => {
     if (!ticketData.description) newErrors.description = 'Description is required';
     if (!ticketData.department) newErrors.department = 'Department is required';
     
-    // Validando hashtags: não pode ser vazio e deve conter apenas hashtags válidas
+ 
     if (!ticketData.hashtags) {
       newErrors.hashtags = 'Hashtags are required';
     } else {
@@ -72,10 +72,10 @@ const TicketComposer = () => {
     if (!validateForm()) return;
   
     try {
-      // Recupera o objeto user do localStorage
+      
       const user = JSON.parse(localStorage.getItem('user'));
       
-      // Verifica se o usuário está disponível e pega o _id
+      
       const clientId = user?._id;
       if (!clientId) {
         alert('User ID not found. Please log in again.');
@@ -84,9 +84,9 @@ const TicketComposer = () => {
   
       const response = await axios.post('http://localhost:8080/api/tickets', {
         ...ticketData,
-        clientId,  // Adiciona o clientId ao ticket
-        department: selectedDepartmentName,  // Envia o nome do departamento
-        hashtags: ticketData.hashtags.split(',').map((tag) => tag.trim()),  // Converte string de hashtags para array
+        clientId,  
+        department: selectedDepartmentName,  
+        hashtags: ticketData.hashtags.split(',').map((tag) => tag.trim()),  
       });
   
       console.log('Ticket created:', response.data);
@@ -99,9 +99,9 @@ const TicketComposer = () => {
         department: '',
         hashtags: '',
       });
-      setSelectedDepartmentName('');  // Limpa o nome do departamento após o envio
+      setSelectedDepartmentName('');  
   
-      // Redireciona para a página principal e reabilita o botão
+      
       navigate('/main');
       onResetButtonState();
     } catch (error) {
@@ -111,9 +111,9 @@ const TicketComposer = () => {
   };
 
   const handleClose = () => {
-    // Quando o botão "Fechar" for clicado, redireciona de volta à página principal sem salvar nada
-    navigate('/main'); // Vai para a página principal
-    onResetButtonState(); // Reseta o estado do botão na página principal
+    
+    navigate('/main'); 
+    onResetButtonState(); 
   };
 
   return (
@@ -164,7 +164,7 @@ const TicketComposer = () => {
         <MenuItem value="medium">Medium</MenuItem>
         <MenuItem value="low">Low</MenuItem>
       </TextField>
-      {/* Campo de seleção para o Departamento */}
+  
       <TextField
         select
         label="Department"
@@ -178,7 +178,7 @@ const TicketComposer = () => {
       >
         {departments.map((dept) => (
           <MenuItem key={dept._id} value={dept._id}>
-            {dept.name}  {/* Exibe o nome do departamento */}
+            {dept.name} 
           </MenuItem>
         ))}
       </TextField>
@@ -194,7 +194,7 @@ const TicketComposer = () => {
       />
       <Box sx={{ width: '100%', textAlign: 'right' }}>
 
-        {/* Botão de Salvar */}
+   
         <Button
           variant="contained"
           color="primary"
@@ -204,7 +204,7 @@ const TicketComposer = () => {
           Save
         </Button>
 
-        {/* Botão de Fechar */}
+
         <Button
           variant="outlined"
           color="secondary"

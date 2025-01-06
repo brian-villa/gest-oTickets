@@ -32,11 +32,24 @@ const Header = ({ userName, role = "client" }) => {
     navigate('/main'); // Navega para a página principal
   };
 
+  // Função para redirecionar para a página de User Dashboard
+  const handleNavigateToUserDashboard = () => {
+    navigate('/user-dashboard'); // Caminho futuro para o User Dashboard
+  };
+
+  // Função para redirecionar para a página de Departments
+  const handleNavigateToDepartments = () => {
+    navigate('/departments'); // Caminho futuro para a página de Departments
+  };
+
   // Verifica se a localização atual é a página "main"
   const isOnMainPage = location.pathname === '/main';
 
   // Lógica para exibir a role apenas se for diferente de "user"
   const shouldShowRole = role !== "client";
+
+  // Verifica se o usuário é admin para mostrar as opções de User Dashboard e Departments
+  const isAdmin = role === "admin";
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -99,6 +112,17 @@ const Header = ({ userName, role = "client" }) => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+                {/* Menu de navegação adicional */}
+                {isAdmin && (
+                  <>
+                    <MenuItem onClick={handleNavigateToUserDashboard}>
+                      <Typography sx={{ textAlign: 'center' }}>User Dashboard</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleNavigateToDepartments}>
+                      <Typography sx={{ textAlign: 'center' }}>Departments</Typography>
+                    </MenuItem>
+                  </>
+                )}
                 <MenuItem onClick={handleNavigateToProfile}>
                   <Typography sx={{ textAlign: 'center' }}>Account</Typography>
                 </MenuItem>

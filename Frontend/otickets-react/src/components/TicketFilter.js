@@ -4,11 +4,11 @@ import axios from 'axios';
 
 const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
   const [departments, setDepartments] = useState([]);
-  const [isClearing, setIsClearing] = useState(false);  // Novo estado para controlar se estamos limpando os filtros
+  const [isClearing, setIsClearing] = useState(false);  
   const user = JSON.parse(localStorage.getItem('user'));
-  const userRole = user ? user.role : null;  // Verifica o role do usuário
+  const userRole = user ? user.role : null;  
 
-  // Função para buscar os departamentos do backend
+ 
   const fetchDepartments = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/departments');
@@ -18,9 +18,9 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
     }
   };
 
-  // Limpar filtros
+
   const clearFilters = () => {
-    setIsClearing(true);  // Marcar que estamos limpando os filtros
+    setIsClearing(true);  
     setFilterInputs({
       title: '',
       priority: '',
@@ -28,7 +28,7 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
       myTickets: false,
       showMyTicketsAsAgent: false,
       showUnassignedTickets: false,
-      showClosedTickets: false,  // Limpar também o novo filtro
+      showClosedTickets: false,  
     });
     setFilters({
       title: '',
@@ -37,11 +37,11 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
       myTickets: false,
       showMyTicketsAsAgent: false,
       showUnassignedTickets: false,
-      showClosedTickets: false,  // Limpar também o novo filtro
+      showClosedTickets: false,  
     });
   };
 
-  // Função para aplicar os filtros (não limpar)
+  
   const applyFilters = () => {
     setFilters(filterInputs);
   };
@@ -50,10 +50,10 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
     fetchDepartments();
   }, []);
 
-  // Resetar o estado de "isClearing" após limpar os filtros
+  
   useEffect(() => {
     if (isClearing) {
-      setIsClearing(false);  // Resetar após limpar os filtros
+      setIsClearing(false);  
     }
   }, [isClearing]);
 
@@ -61,23 +61,23 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
     <Box sx={{ width: '20%', height: '80%', backgroundColor: '#fff', padding: '16px', borderRadius: '8px', boxShadow: 2 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>Filters</Typography>
 
-      {/* Campo de título */}
+      
       <TextField
         label="Title"
         name="title"
         value={filterInputs.title}
-        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, title: e.target.value })}  // Não alterar quando estiver limpando
+        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, title: e.target.value })}  
         fullWidth
         sx={{ mb: 2 }}
       />
 
-      {/* Campo de prioridade */}
+     
       <TextField
         select
         label="Priority"
         name="priority"
         value={filterInputs.priority}
-        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, priority: e.target.value })}  // Não alterar quando estiver limpando
+        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, priority: e.target.value })}  
         fullWidth
         sx={{ mb: 2 }}
       >
@@ -87,13 +87,13 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
         <MenuItem value="low">Low</MenuItem>
       </TextField>
 
-      {/* Campo de departamento */}
+      
       <TextField
         select
         label="Department"
         name="department"
         value={filterInputs.department}
-        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, department: e.target.value })}  // Não alterar quando estiver limpando
+        onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, department: e.target.value })}  
         fullWidth
         sx={{ mb: 2 }}
       >
@@ -103,55 +103,54 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
         ))}
       </TextField>
 
-      {/* Checkbox de "My Tickets" */}
+      
       <FormControlLabel
         control={
           <Checkbox
             checked={filterInputs.myTickets}
-            onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, myTickets: e.target.checked })}  // Não alterar quando estiver limpando
+            onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, myTickets: e.target.checked })} 
           />
         }
         label="Show My Tickets"
       />
 
-      {/* Condicional para "Show My Tickets as Agent" */}
+     
       {userRole !== 'client' && (
         <FormControlLabel
           control={
             <Checkbox
               checked={filterInputs.showMyTicketsAsAgent}
-              onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showMyTicketsAsAgent: e.target.checked })}  // Não alterar quando estiver limpando
+              onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showMyTicketsAsAgent: e.target.checked })}  
             />
           }
           label="Show My Tickets as Agent"
         />
       )}
 
-      {/* Condicional para "Show Unassigned Tickets" */}
+      
       {userRole !== 'client' && (
         <FormControlLabel
           control={
             <Checkbox
               checked={filterInputs.showUnassignedTickets}
-              onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showUnassignedTickets: e.target.checked })}  // Não alterar quando estiver limpando
+              onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showUnassignedTickets: e.target.checked })}  
             />
           }
           label="Show Unassigned Tickets"
         />
       )}
 
-      {/* Novo filtro: Show Closed Tickets */}
       <FormControlLabel
         control={
           <Checkbox
             checked={filterInputs.showClosedTickets}
-            onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showClosedTickets: e.target.checked })}  // Não alterar quando estiver limpando
+            onChange={(e) => !isClearing && setFilterInputs({ ...filterInputs, showClosedTickets: e.target.checked })}  
           />
         }
         label="Show Closed Tickets"
       />
 
-      {/* Botões de Apply Filters e Clear Filters */}
+    
       <Box sx={{ display: 'flex', gap: '10px', mt: 2 }}>
         <Button
           variant="contained"
@@ -163,7 +162,7 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
               backgroundColor: '#3c3c3c',
             },
           }}
-          onClick={applyFilters}  // Função de aplicar filtros
+          onClick={applyFilters}  
         >
           Apply Filters
         </Button>
@@ -179,7 +178,7 @@ const TicketFilter = ({ filterInputs, setFilterInputs, setFilters }) => {
               borderColor: '#252525',
             },
           }}
-          onClick={clearFilters}  // Função de limpar filtros
+          onClick={clearFilters}  
         >
           Clear Filters
         </Button>

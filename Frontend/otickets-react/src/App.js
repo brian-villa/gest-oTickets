@@ -4,6 +4,8 @@ import Signup from './pages/Signup';
 import Main from './pages/Main';
 import TicketComposer from './components/TicketComposer'; // Importando o TicketComposer como sub-rota
 import Profile from './pages/Profile'
+import UserDashboard from './pages/UserDashboard';
+import Department from './pages/Departments';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="ticket-composer" element={<TicketComposer />} />
         </Route>
         <Route path="profile" element={<Profile/>} />
+        <Route path="user-dashboard" element={<UserDashboard />} />
+        <Route path="departments" element={<Department/>} />
       </Routes>
     </Router>
   );

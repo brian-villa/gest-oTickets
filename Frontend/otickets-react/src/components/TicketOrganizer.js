@@ -19,9 +19,9 @@ const TicketOrganizer = () => {
 
   const [filterInputs, setFilterInputs] = useState(filters);
   const user = JSON.parse(localStorage.getItem('user'));
-  const userId = user ? user._id : null;  // Garante que userId não seja undefined
+  const userId = user ? user._id : null;  
 
-  // Função para buscar os tickets da API
+ 
   const fetchTickets = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/tickets');
@@ -34,10 +34,6 @@ const TicketOrganizer = () => {
     }
   };
 
-  // Função para aplicar filtros aos tickets
-  // Função para aplicar filtros aos tickets
-// Função para aplicar filtros aos tickets
-// Função para aplicar filtros aos tickets
 const applyFilters = () => {
   let filtered = tickets;
 
@@ -55,24 +51,24 @@ const applyFilters = () => {
     filtered = filtered.filter(ticket => ticket.department === filters.department);
   }
 
-  // Filtro "Show My Tickets" (baseado no clientId)
+ 
   if (filters.myTickets) {
     filtered = filtered.filter(ticket => ticket.clientId === userId);
   }
 
-  // Filtro "Show My Tickets as Agent" (baseado no agentId)
+
   if (filters.showMyTicketsAsAgent) {
-    filtered = filtered.filter(ticket => ticket.agentID === userId);  // Filtro pelo agentId
+    filtered = filtered.filter(ticket => ticket.agentID === userId);  
   }
 
-  // Filtro "Show Unassigned Tickets" (baseado no agentId vazio)
+  
   if (filters.showUnassignedTickets) {
-    filtered = filtered.filter(ticket => !ticket.agentID);  // Filtra tickets sem agentId
+    filtered = filtered.filter(ticket => !ticket.agentID);  
   }
 
-  // Filtro "Show Closed Tickets" (baseado no status "closed")
+  
   if (filters.showClosedTickets) {
-    filtered = filtered.filter(ticket => ticket.status === 'closed');  // Filtra tickets com status "closed"
+    filtered = filtered.filter(ticket => ticket.status === 'closed');  
   }
 
   setFilteredTickets(filtered);
@@ -81,12 +77,12 @@ const applyFilters = () => {
 
 
 
-  // UseEffect para buscar tickets inicialmente
+  
   useEffect(() => {
     fetchTickets();
   }, []);
 
-  // UseEffect para aplicar os filtros sempre que houver uma mudança nos filtros
+  
   useEffect(() => {
     applyFilters();
   }, [filters]);
@@ -102,13 +98,13 @@ const applyFilters = () => {
           {filteredTickets.length > 0 ? (
             filteredTickets.map((ticket) => (
               <Box key={ticket._id} sx={{ marginBottom: '20px' }}>
-                {/* Passando setTickets para atualizar a lista de tickets ao modificar algum */}
+               
                 <Ticket
                   key={ticket._id}
                   ticket={ticket}
                   userRole={JSON.parse(localStorage.getItem('user'))?.role}
                   userId={userId}
-                  setTickets={setTickets}  // Passando a função setTickets para o Ticket
+                  setTickets={setTickets}  
                 />
               </Box>
             ))

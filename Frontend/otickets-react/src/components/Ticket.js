@@ -3,56 +3,56 @@ import { Container, TextField, Typography, Box, IconButton, Button } from '@mui/
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HistoryIcon from '@mui/icons-material/History'; // Importe o ícone de histórico
+import HistoryIcon from '@mui/icons-material/History';
 import axios from 'axios';
-import TicketModal from './TicketModal';  // Importe o componente TicketModal
-import HistoryModal from './HistoryModal'; // Importe o componente HistoryModal
+import TicketModal from './TicketModal';  
+import HistoryModal from './HistoryModal'; 
 
 const Ticket = ({ ticket, userRole, userId, setTickets }) => {
-  const { _id, title, status, priority, description, department, hashtags, agentID, updates } = ticket;  // Utilize o 'updates' para o histórico
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controle do estado do TicketModal
-  const [historyModalOpen, setHistoryModalOpen] = useState(false); // Controle do estado do HistoryModal
-  const [agentName, setAgentName] = useState(''); // Estado para armazenar o nome do agente
+  const { _id, title, status, priority, description, department, hashtags, agentID, updates } = ticket;  
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [historyModalOpen, setHistoryModalOpen] = useState(false); 
+  const [agentName, setAgentName] = useState(''); 
 
-  // Função para buscar o nome do agente com base no agentID
+
   const fetchAgentName = async () => {
-    if (agentID) {  // Verifica se o ticket possui um agentID
+    if (agentID) { 
       try {
-        const response = await axios.get('http://localhost:8080/api/users'); // Consulta todos os usuários no backend
+        const response = await axios.get('http://localhost:8080/api/users'); 
         const users = response.data;
 
-        // Encontra o usuário com o agentID correspondente
+        
         const agent = users.find(user => user._id.toString() === agentID.toString());
 
         if (agent) {
-          setAgentName(agent.name); // Define o nome do agente
+          setAgentName(agent.name); 
         } else {
-          setAgentName('No agent found'); // Caso não encontre o agente
+          setAgentName('No agent found'); 
         }
       } catch (error) {
         console.error('Erro ao buscar nome do agente:', error);
-        setAgentName('Error fetching agent name'); // Caso ocorra erro na requisição
+        setAgentName('Error fetching agent name'); 
       }
     } else {
-      setAgentName('No agent assigned');  // Caso não haja agentID
+      setAgentName('No agent assigned');  
     }
   };
 
   useEffect(() => {
-    fetchAgentName(); // Chama a função para buscar o nome do agente ao montar o componente
-  }, [agentID]); // Dependência inclui apenas agentID
+    fetchAgentName(); 
+  }, [agentID]); 
 
-  // Função para determinar a cor da borda com base no priority
+  
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'low':
-        return { borderColor: 'green', textColor: 'green' }; // Verde
+        return { borderColor: 'green', textColor: 'green' };
       case 'medium':
-        return { borderColor: '#ffc300', textColor: '#ffc300' }; // Amarelo
+        return { borderColor: '#ffc300', textColor: '#ffc300' };
       case 'high':
-        return { borderColor: 'red', textColor: 'red' }; // Vermelho
+        return { borderColor: 'red', textColor: 'red' }; 
       default:
-        return { borderColor: 'gray', textColor: 'gray' }; // Cor padrão
+        return { borderColor: 'gray', textColor: 'gray' }; 
     }
   };
 

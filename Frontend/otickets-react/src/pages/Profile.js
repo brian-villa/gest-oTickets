@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../partials/Header';
-import { Box, Container, Typography, TextField, Button } from '@mui/material';
-import axios from 'axios'; // Certifique-se de importar o axios
+import { Container, Typography, TextField, Button } from '@mui/material';
+import axios from 'axios'; 
 
 const Profile = () => {
   const [user, setUser] = useState({ name: '', email: '', password: '', role: '' });
-  const [isEditing, setIsEditing] = useState(false); // Controla se estamos no modo de edição
-  const [userId, setUserId] = useState(''); // Para armazenar o ID do usuário
-  const [showPassword, setShowPassword] = useState(false); // Controle para mostrar/ocultar a senha
+  const [isEditing, setIsEditing] = useState(false); 
+  const [userId, setUserId] = useState(''); 
+  const [showPassword, setShowPassword] = useState(false); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      console.log("User loaded from localStorage:", parsedUser); // Verifique os dados carregados do localStorage
-      setUser(parsedUser); // Preenche o estado com o objeto de usuário
-      setUserId(parsedUser._id); // Assume-se que o ID do usuário está armazenado em parsedUser._id
+      console.log("User loaded from localStorage:", parsedUser); 
+      setUser(parsedUser); 
+      setUserId(parsedUser._id); 
     }
+
+    // Remove o scroll da página (para tanto vertical quanto horizontal)
+    document.body.style.overflow = 'hidden';
+
+    // Limpa o overflow ao desmontar o componente
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
   const handleSave = async () => {
@@ -27,15 +35,13 @@ const Profile = () => {
         password: user.password,
         role: user.role
       };
-
-      console.log('Enviando dados para atualização para o ID:', userId);  // Verifique se o ID está correto
       const response = await axios.put(`http://localhost:8080/api/users/${userId}`, updatedUser);
       console.log('User updated:', response.data);
 
-      // Atualiza o localStorage com os dados atualizados
+      
       localStorage.setItem('user', JSON.stringify(response.data)); 
       alert('Profile saved successfully!');
-      setIsEditing(false); // Volta para o estado de visualização
+      setIsEditing(false); 
     } catch (error) {
       console.error('Erro ao salvar as mudanças:', error);
       alert('Erro ao salvar as mudanças!');
@@ -43,32 +49,36 @@ const Profile = () => {
   };
 
   const handleEdit = () => {
-    setIsEditing(true); // Ativa o modo de edição
+    setIsEditing(true); 
   };
 
   const handlePasswordFocus = () => {
-    // Limpa o campo de senha quando ele é focado
     if (user.password !== '') {
       setUser({ ...user, password: '' });
     }
-    setShowPassword(true); // Exibe a senha ao focar no campo
+    setShowPassword(true); 
   };
 
   const handlePasswordBlur = () => {
-    setShowPassword(false); // Quando o campo perde o foco, volta para o tipo "password"
+    setShowPassword(false); 
   };
 
   return (
     <>
-      <Header userName={user.name} />
+      <Header
+        userName={user ? user.name : ''}
+        role={user ? user.role : 'user'} 
+      />
       <Container
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '90vh',
-          minWidth: '100vw',
+          minHeight: '100vh', 
+          minWidth: '100vw', 
           backgroundColor: '#f4f7fb',
+          padding: 0, 
+          overflow: 'hidden', 
         }}
       >
         <Container
@@ -82,6 +92,7 @@ const Profile = () => {
             borderRadius: '8px',
             padding: '20px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden', 
           }}
         >
           <Typography variant="h4" sx={{ mb: 1 }}>
@@ -91,17 +102,15 @@ const Profile = () => {
             Here you can view and edit your personal data!
           </Typography>
 
-          {/* Text Field para Nome */}
           <TextField
             label="Name"
             value={user.name}
             onChange={(e) => setUser({ ...user, name: e.target.value })}
             fullWidth
             sx={{ mb: 2 }}
-            disabled={!isEditing} // Desabilita o campo até que esteja em modo de edição
+            disabled={!isEditing} 
           />
 
-          {/* Text Field para Email */}
           <TextField
             label="Email"
             value={user.email}
@@ -109,38 +118,35 @@ const Profile = () => {
             type="email"
             fullWidth
             sx={{ mb: 2 }}
-            disabled={!isEditing} // Desabilita o campo até que esteja em modo de edição
+            disabled={!isEditing} 
           />
 
-          {/* Text Field para Senha */}
           <TextField
             label="Password"
             value={user.password}
             onChange={(e) => setUser({ ...user, password: e.target.value })}
-            onFocus={handlePasswordFocus} // Limpa o campo e permite visibilidade ao focar
-            onBlur={handlePasswordBlur}  // Reverte para "password" ao sair do campo
-            type={showPassword ? 'text' : 'password'} // Se estiver focado, mostra a senha em texto
+            onFocus={handlePasswordFocus} 
+            onBlur={handlePasswordBlur}  
+            type={showPassword ? 'text' : 'password'} 
             fullWidth
             sx={{ mb: 2 }}
-            disabled={!isEditing} // Desabilita o campo até que esteja em modo de edição
-            placeholder={isEditing ? 'Enter new password' : ''} // Exibe um texto sugestivo
+            disabled={!isEditing} 
+            placeholder={isEditing ? 'Enter new password' : ''} 
           />
 
-          {/* Text Field para Função */}
           <TextField
             label="Role"
             value={user.role}
             onChange={(e) => setUser({ ...user, role: e.target.value })}
             fullWidth
             sx={{ mb: 3 }}
-            disabled // Sempre desabilitado
+            disabled 
           />
 
-          {/* Botão para Editar ou Salvar */}
           <Button
             variant="contained"
             color="primary"
-            onClick={isEditing ? handleSave : handleEdit} // Dependendo do estado, executa Edit ou Save
+            onClick={isEditing ? handleSave : handleEdit} 
             sx={{
               padding: '10px 20px',
               fontSize: '1rem',

@@ -1,10 +1,9 @@
 import { TextField, Container, Button, Typography, Box } from '@mui/material';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';  // Importa o axios para requisições HTTP
-import { useNavigate } from 'react-router-dom';  // Importa useNavigate para navegação
+import axios from 'axios';  
+import { useNavigate } from 'react-router-dom';  
 
-// Definindo o esquema de validação com Yup
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -14,27 +13,25 @@ const validationSchema = Yup.object({
     .required('Confirm password is required'),
 });
 
-// Definindo os estilos que serão reutilizados
 const fieldStyles = {
   mb: 3,
   position: 'relative',
   '& .MuiFormHelperText-root': {
-    position: 'absolute', // Isso posiciona o erro de forma absoluta
-    bottom: '-20px', // Coloca o erro abaixo do campo
-    left: 0, // Posiciona à esquerda
+    position: 'absolute',
+    bottom: '-20px', 
+    left: 0, 
   },
 };
 
 function Signup() {
-  const navigate = useNavigate(); // Inicializa o hook de navegação
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (values) => {
     try {
-      // Envia os dados para o backend
+      
       const response = await axios.post('http://localhost:8080/api/users', values);
-      console.log(response.data); // Exibe a resposta do backend
+      console.log(response.data); 
 
-      // Redireciona o usuário de volta para a página de login (Signin)
       navigate('/');
     } catch (error) {
       console.error('Erro ao criar usuário:', error.response?.data || error.message);
@@ -52,9 +49,9 @@ function Signup() {
       }}
     >
       <Formik
-        initialValues={{ name: '', email: '', password: '', confirmPassword: '' }} // Valores iniciais
-        validationSchema={validationSchema} // Esquema de validação
-        onSubmit={handleSubmit} // Função de envio
+        initialValues={{ name: '', email: '', password: '', confirmPassword: '' }} 
+        validationSchema={validationSchema} 
+        onSubmit={handleSubmit} 
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
           <Form>
@@ -84,7 +81,6 @@ function Signup() {
                   SIGN UP
                 </Typography>
 
-                {/* Campos de texto com estilos reutilizados */}
                 <Field
                   as={TextField}
                   name="name"
@@ -94,8 +90,8 @@ function Signup() {
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)} // Aplica borda vermelha
-                  helperText={touched.name && errors.name} // Exibe a mensagem de erro abaixo
+                  error={touched.name && Boolean(errors.name)} 
+                  helperText={touched.name && errors.name} 
                   sx={fieldStyles}
                 />
 
@@ -108,8 +104,8 @@ function Signup() {
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.email && Boolean(errors.email)} // Aplica borda vermelha
-                  helperText={touched.email && errors.email} // Exibe a mensagem de erro abaixo
+                  error={touched.email && Boolean(errors.email)} 
+                  helperText={touched.email && errors.email} 
                   sx={fieldStyles}
                 />
 
@@ -123,8 +119,8 @@ function Signup() {
                     value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.password && Boolean(errors.password)} // Aplica borda vermelha
-                    helperText={touched.password && errors.password} // Exibe a mensagem de erro abaixo
+                    error={touched.password && Boolean(errors.password)} 
+                    helperText={touched.password && errors.password} 
                     sx={{ ...fieldStyles, width: '49%' }}
                   />
 
@@ -137,8 +133,8 @@ function Signup() {
                     value={values.confirmPassword}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.confirmPassword && Boolean(errors.confirmPassword)} // Aplica borda vermelha
-                    helperText={touched.confirmPassword && errors.confirmPassword} // Exibe a mensagem de erro abaixo
+                    error={touched.confirmPassword && Boolean(errors.confirmPassword)} 
+                    helperText={touched.confirmPassword && errors.confirmPassword} 
                     sx={{ ...fieldStyles, width: '49%' }}
                   />
                 </Box>

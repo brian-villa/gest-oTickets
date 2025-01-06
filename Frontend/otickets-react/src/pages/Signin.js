@@ -5,19 +5,18 @@ import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 
-// Definindo o esquema de validação com Yup
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
-// Estilo para os campos de texto com helperText posicionado de forma absoluta
+//deixa as mensagens de erro sem empurrar o texto todo pra baixo
 const fieldStyles = {
   mb: 3,
   position: 'relative',
   '& .MuiFormHelperText-root': {
     position: 'absolute',
-    bottom: '-20px', // Posiciona o texto de ajuda abaixo do campo
+    bottom: '-20px', 
     left: 0,
   },
 };
@@ -30,7 +29,6 @@ const Signin = () => {
       const response = await axios.post('http://localhost:8080/api/users/login', values);
       const { token, user } = response.data;
 
-      // Armazena o token e os dados do usuário no localStorage
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
 
@@ -70,7 +68,6 @@ const Signin = () => {
                 boxShadow: 2,
               }}
             >
-              {/* Caixa de Login */}
               <Box
                 sx={{
                   bgcolor: '#e0e1dd',
@@ -139,7 +136,6 @@ const Signin = () => {
                 </Button>
               </Box>
 
-              {/* Caixa de Mensagem de Boas-Vindas */}
               <Box
                 sx={{
                   bgcolor: '#023047',
