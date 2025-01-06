@@ -3,12 +3,15 @@ import { Container, TextField, Typography, Box, IconButton, Button } from '@mui/
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HistoryIcon from '@mui/icons-material/History'; // Importe o ícone de histórico
 import axios from 'axios';
 import TicketModal from './TicketModal';  // Importe o componente TicketModal
+import HistoryModal from './HistoryModal'; // Importe o componente HistoryModal
 
 const Ticket = ({ ticket, userRole, userId, setTickets }) => {
-  const { _id, title, status, priority, description, department, hashtags, agentID } = ticket;
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controle do estado do modal
+  const { _id, title, status, priority, description, department, hashtags, agentID, updates } = ticket;  // Utilize o 'updates' para o histórico
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controle do estado do TicketModal
+  const [historyModalOpen, setHistoryModalOpen] = useState(false); // Controle do estado do HistoryModal
   const [agentName, setAgentName] = useState(''); // Estado para armazenar o nome do agente
 
   // Função para buscar o nome do agente com base no agentID
@@ -141,26 +144,31 @@ const Ticket = ({ ticket, userRole, userId, setTickets }) => {
               <CheckCircleIcon sx={{ color: 'green' }} />
             </IconButton>
           )}
-
-          {userRole !== 'client' && status === 'open' && (
-            <Button onClick={takeTicket} variant="outlined" sx={{ padding: '5px 10px', fontSize: '12px' }}>
-              Take
-            </Button>
-          )}
+          <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <IconButton sx={{ padding: 0 }} onClick={() => setHistoryModalOpen(true)}>
+              <HistoryIcon sx={{ color: 'gray' }} />
+            </IconButton>
+            {userRole !== 'client' && status === 'open' && (
+              <Button onClick={takeTicket} variant="outlined" sx={{ padding: '5px 10px', fontSize: '12px' }}>
+                Take
+              </Button>
+            )}
+          </Box>
         </Box>
       </Box>
-      <Box sx={{display:'flex', justifyContent:'space-between', mb:2}}>
-        <TextField label="Status" value={status} sx={{width:'49%'}} readOnly />
-        <TextField label="Priority" value={priority} sx={{width:'49%'}} readOnly />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <TextField label="Status" value={status} sx={{ width: '49%' }} readOnly />
+        <TextField label="Priority" value={priority} sx={{ width: '49%' }} readOnly />
       </Box>
       <TextField label="Description" value={description} fullWidth readOnly multiline rows={4} sx={{ mb: 2 }} />
-      <Box sx={{display:'flex', justifyContent:'space-between', mb:2}}>
-        <TextField label="Department" value={department} readOnly sx={{width:'49%' }} />
-        <TextField label="Agent" value={agentName || 'No agent assigned'} readOnly sx={{ width:'49%' }} />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <TextField label="Department" value={department} readOnly sx={{ width: '49%' }} />
+        <TextField label="Agent" value={agentName || 'No agent assigned'} readOnly sx={{ width: '49%' }} />
       </Box>
       <TextField label="Hashtags" value={hashtags.join(', ')} fullWidth readOnly sx={{ mb: 2 }} />
 
       <TicketModal open={isModalOpen} handleClose={() => setIsModalOpen(false)} ticket={ticket} />
+      <HistoryModal open={historyModalOpen} handleClose={() => setHistoryModalOpen(false)} updates={updates} />
     </Container>
   );
 };

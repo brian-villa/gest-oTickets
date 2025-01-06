@@ -13,6 +13,26 @@ const TicketModal = ({ open, handleClose, ticket }) => {
   const [newHashtags, setNewHashtags] = useState(hashtags.join(', '));
 
   const [departments, setDepartments] = useState([]);
+  const [userId, setUserId] = useState(null); // Estado para armazenar o ID do usuário
+
+  useEffect(() => {
+    // Carregar o usuário do localStorage quando o modal for aberto
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user._id) {
+          setUserId(user._id); // Define o ID do usuário corretamente
+        } else {
+          console.error("User object is not correctly structured:", user);
+        }
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+      }
+    } else {
+      console.error("No user found in localStorage");
+    }
+  }, [open]);
 
   // Sincroniza os estados quando o modal é aberto
   useEffect(() => {
@@ -40,8 +60,13 @@ const TicketModal = ({ open, handleClose, ticket }) => {
   }, []);
 
   const updateTicket = async () => {
+    if (!userId) {
+      alert('User is not logged in!');
+      return;
+    }
+
     const updatedTicket = {
-      title: newTitle,  // Adicionando o título no objeto de atualização
+      title: newTitle,
       status: newStatus,
       priority: newPriority,
       description: newDescription,
@@ -49,10 +74,39 @@ const TicketModal = ({ open, handleClose, ticket }) => {
       hashtags: newHashtags.split(',').map(tag => tag.trim()),
     };
 
-    console.log('Ticket being sent to backend:', updatedTicket);  // Verifique o que está sendo enviado
+    const updates = [];
+
+    if (newTitle !== title) {
+      updates.push("Updated title");
+    }
+    if (newStatus !== status) {
+      updates.push("Updated status");
+    }
+    if (newPriority !== priority) {
+      updates.push("Updated priority");
+    }
+    if (newDescription !== description) {
+      updates.push("Updated description");
+    }
+    if (newDepartment !== department) {
+      updates.push("Updated department");
+    }
+    if (newHashtags !== hashtags.join(', ')) {
+      updates.push("Updated hashtags");
+    }
+
+    const ticketUpdates = updates.map((action) => ({
+      timestamp: new Date(),
+      authorId: userId, 
+      action,
+    }));
+
+    const ticketData = { ...updatedTicket, updates: ticketUpdates };
+
+    console.log('Ticket being sent to backend:', ticketData); // Verifique o que está sendo enviado para o backend
 
     try {
-      const response = await axios.put(`http://localhost:8080/api/tickets/${_id}`, updatedTicket);
+      const response = await axios.put(`http://localhost:8080/api/tickets/${_id}`, ticketData);
       console.log('Ticket updated:', response.data);
       alert('Ticket updated successfully');
       handleClose();
@@ -82,7 +136,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
       >
         <Typography variant="h6">Edit Ticket</Typography>
 
-        {/* Adicionando o campo Title */}
+        {/* Title field */}
         <TextField
           label="Title"
           value={newTitle}
@@ -91,6 +145,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
           sx={{ mb: 2 }}
         />
 
+        {/* Priority field */}
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel>Priority</InputLabel>
           <Select value={newPriority} onChange={(e) => setNewPriority(e.target.value)} label="Priority">
@@ -100,6 +155,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
           </Select>
         </FormControl>
 
+        {/* Description field */}
         <TextField
           label="Description"
           value={newDescription}
@@ -110,6 +166,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
           sx={{ mb: 2 }}
         />
 
+        {/* Department field */}
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel>Department</InputLabel>
           <Select value={newDepartment} onChange={(e) => setNewDepartment(e.target.value)} label="Department">
@@ -121,6 +178,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
           </Select>
         </FormControl>
 
+        {/* Hashtags field */}
         <TextField
           label="Hashtags"
           value={newHashtags}
@@ -129,6 +187,7 @@ const TicketModal = ({ open, handleClose, ticket }) => {
           sx={{ mb: 2 }}
         />
 
+        {/* Buttons */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button variant="contained" color="primary" onClick={updateTicket}>
             Save
