@@ -23,21 +23,28 @@ const getDepartments = async (req, res) => {
 const updateDepartments = async (req, res) => {
     try {
         const { id } = req.params;
+        const { agentIds, agents } = req.body;  // Extrai os campos 'agentIds' e 'agents' da requisição
+
+        // Atualiza o departamento, adicionando o usuário aos arrays
         const updatedDepartment = await Department.findByIdAndUpdate(
             id,
-            { $set: req.body }, //atualiza os campos no body da req
-            { new: true, runValidators: true } //retorna o documento atualizado e valida os dados
+            { 
+                $push: { agentIds: agentIds },   // Adiciona o ID do usuário no campo 'agentIds'
+                $addToSet: { agents: agents }    // Adiciona o nome do usuário no campo 'agents' (sem duplicação)
+            },
+            { new: true, runValidators: true }   // Retorna o documento atualizado
         );
 
-        if(!updatedDepartment) {
-            return res.status(404).json({ error: "Department not found "});
-        };
+        if (!updatedDepartment) {
+            return res.status(404).json({ error: "Department not found" });
+        }
 
-        res.status(200).json(updatedDepartment);
-    } catch(e) {
-        res.status(500).json({ error: e.message });
-    };
+        res.status(200).json(updatedDepartment);  // Retorna o departamento atualizado
+    } catch (e) {
+        res.status(500).json({ error: e.message });  // Em caso de erro, retorna uma mensagem
+    }
 };
+
 
 const deleteDepartments = async (req, res) => {
     try {

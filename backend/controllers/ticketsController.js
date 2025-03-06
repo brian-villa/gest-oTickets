@@ -45,25 +45,76 @@ const searchTickets = async (req, res) => {
     }
 };
 
-
 const updateTickets = async (req, res) => {
     try {
-        const { id } = req.params;
-        const updatedTicket = await Ticket.findByIdAndUpdate(
-            id,
-            { $set: req.body }, //atualiza os campos no body da req
-            { new: true, runValidators: true } //retorna o documento atualizado e valida os dados
-        );
-
-        if(!updatedTicket) {
-            return res.status(404).json({ error: "Ticket not found "});
-        };
-
-        res.status(200).json(updatedTicket);
-    } catch(e) {
-        res.status(500).json({ error: e.message });
-    };
+      const { id } = req.params;
+      const { title, status, priority, description, department, hashtags, agentID } = req.body;
+  
+      // Carregar o ticket atual para comparar os valores antigos com os novos
+      const currentTicket = await Ticket.findById(id);
+  
+      if (!currentTicket) {
+        return res.status(404).json({ error: "Ticket not found" });
+      }
+  
+      // Adicionar as atualizações específicas ao campo 'updates'
+      const updateActions = [];
+  
+      if (title !== currentTicket.title) {
+        updateActions.push("Updated title");
+      }
+      if (status !== currentTicket.status) {
+        updateActions.push("Updated status");
+      }
+      if (priority !== currentTicket.priority) {
+        updateActions.push("Updated priority");
+      }
+      if (description !== currentTicket.description) {
+        updateActions.push("Updated description");
+      }
+      if (department !== currentTicket.department) {
+        updateActions.push("Updated department");
+      }
+      if (hashtags && hashtags.join(',') !== currentTicket.hashtags.join(',')) {
+        updateActions.push("Updated hashtags");
+      }
+  
+      const updates = updateActions.map((action) => ({
+        timestamp: new Date(),
+        authorId: req.userId, // Aqui você deve garantir que tenha o ID do autor (usuário logado)
+        action
+      }));
+  
+      // Atualiza o ticket e adiciona a lista de ações realizadas no campo 'updates'
+      const updatedTicket = await Ticket.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            title,
+            status,
+            priority,
+            description,
+            department,
+            hashtags: hashtags || [], // Garantindo que hashtags sejam um array, caso não seja enviado
+            agentID, // Atualiza o agentID
+          },
+          $push: { updates: { $each: updates } } // Adiciona as atualizações de ações
+        },
+        { new: true, runValidators: true }
+      );
+  
+      res.status(200).json(updatedTicket);  // Retorna o ticket atualizado
+    } catch (e) {
+      console.error("Erro ao atualizar ticket:", e);  // Log de erro
+      res.status(500).json({ error: e.message });
+    }
 };
+  
+  
+
+  
+
+
 
 const deleteTickets = async (req, res) => {
     try {
