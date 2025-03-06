@@ -13,7 +13,7 @@ app.use(helmet());
 
 // CSRF Protection
 const csrfProtection = csrf({ cookie: true });
-//app.use(csrfProtection);
+app.use(csrfProtection);
 
 //chamada das rotas na api
 app.use("/api", apiRoutes);
